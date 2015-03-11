@@ -50,7 +50,7 @@ var genMember = function() {
 var genfalse = function() {return 'false'};
 var gennull = function () {return 'null'};
 var gentrue = function() {return 'true'};
-var P_ADD_MEMBER = 0.5;
+var P_ADD_MEMBER = 0.55;
 var genobject = function() {
   
   var members = '';
@@ -99,10 +99,10 @@ var weights = [
   1, // false
   1, // null
   1, // true
-  10, // object
-  10, // array
-  2, // number
-  2, // string
+  50, // object
+  50, // array
+  20, // number
+  20, // string
 ];
 var genValue = function() {
   return getRandomItem(genFs, weights)();   
@@ -136,8 +136,8 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 100;
-var N_MUTATIONS_PER_CHAR = 10;
+var N_CASES = 1000;
+var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 for (var i = 0; i<N_CASES; i++) {
   var json = genJSON();
