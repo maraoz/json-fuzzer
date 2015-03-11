@@ -1,8 +1,17 @@
 
 
 var r = Math.random;
+String.prototype.replaceAt=function(index, character) {
+    return this.substr(0, index) + character + this.substr(index+character.length);
+}
+
+
+var chars = '0123456789abcdefghijklmnopqurstuvwxyz'+
+  'ABCDEFGHIJKLMNOPQURSTUVWXYZ'+
+  '~!@#$%^&*()_+`1234567890-=' + 
+  '';
 var genChar = function() {
-  return (Math.random()).toString(36).substr(2,1);
+    return chars.substr( Math.floor(r() * chars.length), 1);
 };
 
 var genString = function(len) {
@@ -105,28 +114,47 @@ var gen1WS = function() {
 };
 
 
-var MAXWS = 5;
+var MAXWS = 3;
 var genWS = function() {
   var ret = '';
+  return ret;
+  // TODO: correct whitespace generation
   for (var i = 0; i<r()*MAXWS; i++) {
     ret += gen1WS();
   }
   return ret;
 };
 
-var gen = function() {
+var genJSON = function() {
   return genWS() + genValue() + genWS();
 };
 
-for (var i = 0; i<1000; i++) {
-  var s = gen();
-  console.log(s);
-  try {
-    JSON.parse(s);
-  } catch (e) {
-    throw e;
+
+var mutate = function(json) {
+  var pos = Math.floor(r()*json.length);
+  return json.replaceAt(pos, genChar());
+};
+
+
+var N_CASES = 100;
+var N_MUTATIONS_PER_CHAR = 10;
+var cases = 0;
+for (var i = 0; i<N_CASES; i++) {
+  var json = genJSON();
+  var nMutations = json.length * N_MUTATIONS_PER_CHAR;
+  for (var j = 0; j<nMutations; j++) {
+    var s = j===0 ? json : mutate(json);
+    console.log(s);
+    cases += 1;
+    try {
+      JSON.parse(s);
+    } catch (e) {
+      if (!(e instanceof SyntaxError)) {
+        throw e;
+      }
+    }
   }
 }
-
+console.log('done:', cases, 'cases');
 
 
