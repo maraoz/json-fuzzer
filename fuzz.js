@@ -62,7 +62,7 @@ var JSON_GRAMMAR = {
     ['ws', id(']'), 'ws']
   ],
   endobject: [
-    ['ws', id(']'), 'ws']
+    ['ws', id('}'), 'ws']
   ],
   nameseparator: [
     ['ws', id(':'), 'ws']
@@ -83,8 +83,15 @@ var JSON_GRAMMAR = {
     ['string'],
   ],
 
-  object: id('{}'),
-  array: id('[]'),
+  // object
+  object: [
+    ['beginobject', 'endobject']
+  ],
+
+  // array
+  array: [
+    ['beginarray', 'endarray']
+  ],
   number: id('1'),
   string: id('"hello world"'),
 
@@ -94,7 +101,7 @@ var genFromGrammar = function(grammar) {
   var stack = ['root'];
   var s = '';
   while (stack.length !== 0) {
-    var current = stack.pop();
+    var current = stack.shift();
     // current is a terminal 
     if (_.isFunction(current)) {
       s += current();
