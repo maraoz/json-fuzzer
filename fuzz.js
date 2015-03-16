@@ -77,8 +77,8 @@ var JSON_GRAMMAR = {
     //[id('true')],
     //[id('false')],
     [id('null')],
-    ['object'],
-    //['array'],
+    //['object'],
+    ['array'],
     //['number'],
     //['string'],
   ],
@@ -98,8 +98,15 @@ var JSON_GRAMMAR = {
 
   // array
   array: [
-    ['beginarray', 'endarray']
+    ['beginarray', 'endarray'],
+    ['beginarray', 'list', 'endarray']
   ],
+  list: [
+    ['value'],
+    ['value', 'valueseparator', 'list']
+  ],
+
+  // number
   number: id('1'),
   string: id('"hello world"'),
 
@@ -109,13 +116,12 @@ var genFromGrammar = function(grammar) {
   var stack = ['root'];
   var s = '';
   while (stack.length !== 0) {
-    console.log('stack', stack);
+    //console.log('stack', stack);
     var current = stack.pop();
-    console.log('current', current);
+    //console.log('current', current);
     // current is a terminal 
     if (_.isFunction(current)) {
       s += current();
-      console.log('s', s);
       continue;
     }
 
@@ -148,7 +154,7 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 1;
+var N_CASES = 1000;
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 for (var i = 0; i < N_CASES; i++) {
@@ -162,9 +168,9 @@ for (var i = 0; i < N_CASES; i++) {
     try {
       JSON.parse(s);
     } catch (e) {
-      if (!(e instanceof SyntaxError)) {
+      //if (!(e instanceof SyntaxError)) {
         throw e;
-      }
+      //}
     }
   }
 }
