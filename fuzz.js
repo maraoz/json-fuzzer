@@ -45,11 +45,11 @@ var JSON_GRAMMAR = {
   // whitespace
   ws: [
     [id('')],
-    [id('\n')],
-    [id('\t')],
-    [id('\r')],
-    [id(' ')],
-    ['ws', 'ws'],
+    //[id('\n')],
+    //[id('\t')],
+    //[id('\r')],
+    //[id(' ')],
+    //['ws', 'ws'],
   ],
   // structural chars
   beginarray: [
@@ -74,18 +74,26 @@ var JSON_GRAMMAR = {
   // values
   // false / null / true / object / array / number / string
   value: [
-    [id('true')],
-    [id('false')],
+    //[id('true')],
+    //[id('false')],
     [id('null')],
     ['object'],
-    ['array'],
-    ['number'],
-    ['string'],
+    //['array'],
+    //['number'],
+    //['string'],
   ],
 
   // object
   object: [
+    ['beginobject', 'members', 'endobject'],
     ['beginobject', 'endobject']
+  ],
+  members: [
+    ['member'],
+    ['members', 'valueseparator', 'member'],
+  ],
+  member: [
+    ['string', 'nameseparator', 'value'],
   ],
 
   // array
@@ -101,10 +109,13 @@ var genFromGrammar = function(grammar) {
   var stack = ['root'];
   var s = '';
   while (stack.length !== 0) {
-    var current = stack.shift();
+    console.log('stack', stack);
+    var current = stack.pop();
+    console.log('current', current);
     // current is a terminal 
     if (_.isFunction(current)) {
       s += current();
+      console.log('s', s);
       continue;
     }
 
@@ -114,7 +125,8 @@ var genFromGrammar = function(grammar) {
 
       // rule is an array of symbols to be added to the stack
       var rule = _.sample(rules);
-      stack.push.apply(stack, rule);
+      var symbols = _.clone(rule).reverse();
+      stack.push.apply(stack, symbols);
 
     } else if (_.isFunction(rules)) {
       s += rules();
@@ -131,15 +143,12 @@ var genJSON = function() {
 };
 
 var mutate = function(json) {
-  return json;
-  /*
   var pos = Math.floor(r() * json.length);
   return json.replaceAt(pos, genChar());
-  */
 };
 
 
-var N_CASES = 10;
+var N_CASES = 1;
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 for (var i = 0; i < N_CASES; i++) {
@@ -148,7 +157,7 @@ for (var i = 0; i < N_CASES; i++) {
   var nMutations = 1; //json.length * N_MUTATIONS_PER_CHAR;
   for (var j = 0; j < nMutations; j++) {
     var s = j === 0 ? json : mutate(json);
-    console.log(s);
+    console.log('json:<', s, '>');
     cases += 1;
     try {
       JSON.parse(s);
