@@ -47,27 +47,33 @@ var unicode = function() {
     }
     ret = zeroes + ret;
   }
-  return 'u'+ret;
+  return '\\u' + ret;
 };
 var escapableChars = function() {
   var res = [];
-  res.push([id('"')]);
-  res.push([id('\\')]);
-  res.push([id('/')]);
-  res.push([id('b')]);
-  res.push([id('f')]);
-  res.push([id('n')]);
-  res.push([id('r')]);
-  res.push([id('t')]);
+  res.push([id('\\"')]);
+  res.push([id('\\\\')]);
+  res.push([id('\\/')]);
+  res.push([id('\\b')]);
+  res.push([id('\\f')]);
+  res.push([id('\\n')]);
+  res.push([id('\\r')]);
+  res.push([id('\\t')]);
   res.push([unicode]);
   return res;
 };
 
 var unescapedChars = function() {
   var res = [];
+  for (var x = 0x20; x < 0x100; x++) {
+    if (x === 0x22 || x === 0x5C) {
+      continue;
+    }
+    var c = String.fromCharCode(x);
+    res.push([id(c)]);
+  }
   return res;
 };
-
 
 var JSON_GRAMMAR = {
   // root
@@ -208,8 +214,8 @@ var JSON_GRAMMAR = {
     ['char', 'chars'],
   ],
   char: [
-    //['unescaped'],
-    [id('\\'), 'escapable'],
+    ['unescaped'],
+    [id('\\\\'), 'escapable'],
   ],
   unescaped: unescapedChars(),
   escapable: escapableChars(),
@@ -226,6 +232,7 @@ var genFromGrammar = function(grammar) {
     // current is a terminal 
     if (_.isFunction(current)) {
       s += current();
+      //console.log('s', s);
       continue;
     }
 
@@ -258,7 +265,7 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 1000;
+var N_CASES = 100000;
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 for (var i = 0; i < N_CASES; i++) {
