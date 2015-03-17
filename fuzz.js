@@ -112,12 +112,12 @@ var JSON_GRAMMAR = {
   // values
   // false / null / true / object / array / number / string
   value: [
-    //[id('true')],
-    //[id('false')],
-    //[id('null')],
-    //['object'],
-    //['array'],
-    //['number'],
+    [id('true')],
+    [id('false')],
+    [id('null')],
+    ['object'],
+    ['array'],
+    ['number'],
     ['string'],
   ],
 
@@ -265,7 +265,7 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 100000;
+var N_CASES = 1000;
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 for (var i = 0; i < N_CASES; i++) {
