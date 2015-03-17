@@ -83,11 +83,11 @@ var JSON_GRAMMAR = {
   // whitespace
   ws: [
     [id('')],
-    //[id('\n')],
-    //[id('\t')],
-    //[id('\r')],
-    //[id(' ')],
-    //['ws', 'ws'],
+    [id('\n')],
+    [id('\t')],
+    [id('\r')],
+    [id(' ')],
+    ['ws', 'ws'],
   ],
   // structural chars
   beginarray: [
