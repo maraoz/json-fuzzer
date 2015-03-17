@@ -51,7 +51,6 @@ var unicode = function() {
 };
 var escapableChars = function() {
   var res = [];
-  /*
   res.push([id('"')]);
   res.push([id('\\')]);
   res.push([id('/')]);
@@ -60,7 +59,6 @@ var escapableChars = function() {
   res.push([id('n')]);
   res.push([id('r')]);
   res.push([id('t')]);
-  */
   res.push([unicode]);
   return res;
 };
