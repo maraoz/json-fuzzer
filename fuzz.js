@@ -76,10 +76,10 @@ var JSON_GRAMMAR = {
   value: [
     //[id('true')],
     //[id('false')],
-    [id('null')],
+    //[id('null')],
     //['object'],
-    ['array'],
-    //['number'],
+    //['array'],
+    ['number'],
     //['string'],
   ],
 
@@ -107,7 +107,67 @@ var JSON_GRAMMAR = {
   ],
 
   // number
-  number: id('1'),
+  number: [
+    ['maybeMinus', 'int', 'maybeFrac', 'maybeExp'],
+  ],
+  maybeMinus: [
+    [id('')],
+    [id('-')],
+  ],
+  maybeFrac: [
+    [id('')],
+    [id('.'), 'natDigit'],
+  ],
+  natDigit: [
+    ['digit'],
+    ['digit', 'natDigit'],
+  ],
+  maybeExp: [
+    [id('')],
+    ['e', 'minusPlus', 'natDigit'],
+  ],
+  minusPlus: [
+    [id('-')],
+    [id('+')],
+  ],
+  e: [
+    [id('e')],
+    [id('E')],
+  ],
+  int: [
+    [id('0')],
+    ['digit19', 'digits']
+  ],
+  digit19: [
+    [id('1')],
+    [id('2')],
+    [id('3')],
+    [id('4')],
+    [id('5')],
+    [id('6')],
+    [id('7')],
+    [id('8')],
+    [id('9')],
+  ],
+  digits: [
+    [id('')],
+    ['digits', 'digit']
+  ],
+  digit: [
+    [id('0')],
+    [id('1')],
+    [id('2')],
+    [id('3')],
+    [id('4')],
+    [id('5')],
+    [id('6')],
+    [id('7')],
+    [id('8')],
+    [id('9')],
+
+  ],
+
+  // string
   string: id('"hello world"'),
 
 };
@@ -166,10 +226,11 @@ for (var i = 0; i < N_CASES; i++) {
     console.log('json:<', s, '>');
     cases += 1;
     try {
-      JSON.parse(s);
+      var obj = JSON.parse(s);
+      console.log('parsed', obj);
     } catch (e) {
       //if (!(e instanceof SyntaxError)) {
-        throw e;
+      throw e;
       //}
     }
   }
