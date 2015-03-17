@@ -19,7 +19,7 @@ var getRandomItem = function(list, weight) {
   var total_weight = weight.reduce(function(prev, cur) {
     return prev + cur;
   });
-  var random_num = r() * total_weight
+  var random_num = r() * total_weight;
   var weight_sum = 0;
 
   for (var i = 0; i < list.length; i++) {
@@ -37,6 +37,40 @@ var id = function(x) {
     return x;
   };
 };
+
+var unicode = function() {
+  var ret = Math.floor(Math.random() * 0xffff).toString(16);
+  if (ret.length < 4) {
+    var zeroes = '';
+    for (var i = 0; i < 4 - ret.length; i++) {
+      zeroes += '0';
+    }
+    ret = zeroes + ret;
+  }
+  return 'u'+ret;
+};
+var escapableChars = function() {
+  var res = [];
+  /*
+  res.push([id('"')]);
+  res.push([id('\\')]);
+  res.push([id('/')]);
+  res.push([id('b')]);
+  res.push([id('f')]);
+  res.push([id('n')]);
+  res.push([id('r')]);
+  res.push([id('t')]);
+  */
+  res.push([unicode]);
+  return res;
+};
+
+var unescapedChars = function() {
+  var res = [];
+  return res;
+};
+
+
 var JSON_GRAMMAR = {
   // root
   root: [
@@ -79,8 +113,8 @@ var JSON_GRAMMAR = {
     //[id('null')],
     //['object'],
     //['array'],
-    ['number'],
-    //['string'],
+    //['number'],
+    ['string'],
   ],
 
   // object
@@ -164,13 +198,25 @@ var JSON_GRAMMAR = {
     [id('7')],
     [id('8')],
     [id('9')],
-
   ],
 
   // string
-  string: id('"hello world"'),
+  string: [
+    [id('"'), 'chars', id('"')],
+  ],
 
+  chars: [
+    ['char'],
+    ['char', 'chars'],
+  ],
+  char: [
+    //['unescaped'],
+    [id('\\'), 'escapable'],
+  ],
+  unescaped: unescapedChars(),
+  escapable: escapableChars(),
 };
+
 
 var genFromGrammar = function(grammar) {
   var stack = ['root'];
