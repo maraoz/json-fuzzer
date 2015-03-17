@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = _ || require('lodash');
+var $ = $ || require('jquery');
 
 var r = Math.random;
 String.prototype.replaceAt = function(index, character) {
@@ -265,25 +266,38 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 1000;
+var N_CASES = 360*10000; 
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
-for (var i = 0; i < N_CASES; i++) {
-  console.log('case', i);
+var i = 0;
+console.time('fuzz');
+(function asyncLoop() {
   var json = genJSON();
   var nMutations = 1; //json.length * N_MUTATIONS_PER_CHAR;
   for (var j = 0; j < nMutations; j++) {
     var s = j === 0 ? json : mutate(json);
-    console.log('json:<', s, '>');
+    console.log(s);
     cases += 1;
     try {
       var obj = JSON.parse(s);
-      console.log('parsed', obj);
+      console.log(obj);
     } catch (e) {
-      //if (!(e instanceof SyntaxError)) {
       throw e;
-      //}
     }
   }
-}
-console.log('done:', cases, 'cases');
+  if (i < N_CASES) {
+    var moveBar = (i % Math.floor(N_CASES / 100)) === 0;
+    if (moveBar) {
+      var p = i / N_CASES * 100;
+      $('#progress').css('width', p + '%');
+      $('#progress').html(Math.floor(p) + '%');
+    }
+    i++;
+    setTimeout(asyncLoop, 1);
+  } else {
+    console.log('done:', cases, 'cases');
+    console.timeEnd('fuzz');
+    $('#progress').css('width', '100%');
+    $('#progress').html('Done!');
+  }
+})();
