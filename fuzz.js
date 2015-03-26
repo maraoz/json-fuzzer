@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = _ || require('lodash');
-var $ = $ || require('jquery');
+var $ = $ || null;
 
 var r = Math.random;
 String.prototype.replaceAt = function(index, character) {
@@ -266,7 +266,7 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 360*10000; 
+var N_CASES = 12 * 1*60 * 10000;
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 var i = 0;
@@ -289,15 +289,19 @@ console.time('fuzz');
     var moveBar = (i % Math.floor(N_CASES / 100)) === 0;
     if (moveBar) {
       var p = i / N_CASES * 100;
-      $('#progress').css('width', p + '%');
-      $('#progress').html(Math.floor(p) + '%');
+      if ($) {
+        $('#progress').css('width', p + '%');
+        $('#progress').html(Math.floor(p) + '%');
+      }
     }
     i++;
     setTimeout(asyncLoop, 1);
   } else {
-    console.log('done:', cases, 'cases');
+    console.log('done:', cases - 1, 'cases');
     console.timeEnd('fuzz');
-    $('#progress').css('width', '100%');
-    $('#progress').html('Done!');
+    if ($) {
+      $('#progress').css('width', '100%');
+      $('#progress').html('Done!');
+    }
   }
 })();
