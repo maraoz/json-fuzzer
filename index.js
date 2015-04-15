@@ -266,7 +266,7 @@ var mutate = function(json) {
 };
 
 
-var N_CASES = 12 * 1*60 * 10000;
+var N_CASES = 1*60 * 10000;
 var N_MUTATIONS_PER_CHAR = 1;
 var cases = 0;
 var i = 0;
